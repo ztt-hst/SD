@@ -1,0 +1,137 @@
+<UserControl x:Class="SDWpfApp.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SDWpfApp.Views"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxnav="http://schemas.devexpress.com/winfx/2008/xaml/navigation"
+             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:Custom="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/navigation"
+             xmlns:cvt="clr-namespace:SDWpfApp.Models.Converters"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:ViewModels="clr-namespace:SDWpfApp.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             DataContext="{dxmvvm:ViewModelSource Type={x:Type ViewModels:MainViewModel}}">
+    <UserControl.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="cvtBoolToVisibility"/>
+    </UserControl.Resources>
+    <dxmvvm:Interaction.Behaviors>
+        <dx:DXMessageBoxService/>
+        <dx:DialogService DialogWindowStartupLocation="CenterOwner">
+            <dx:DialogService.DialogStyle>
+                <Style TargetType="dx:DXDialogWindow">
+                    <Setter Property="Height" Value="300"/>
+                    <Setter Property="Width" Value="500"/>
+                </Style>
+            </dx:DialogService.DialogStyle>
+            <dx:DialogService.ViewTemplate>
+                <DataTemplate>
+                    <local:PasswordView />
+                </DataTemplate>
+            </dx:DialogService.ViewTemplate>
+        </dx:DialogService>
+    </dxmvvm:Interaction.Behaviors>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <dxnav:TileBar  Grid.Row="0" Background="#FFA5C5E6" ShowGroupHeaders="False" Padding="8" Margin="0,-1,0,1">
+            <dxnav:TileBarItem Background="#FF68D0C9" Content="{DynamicResource Supervision}" Command="{Binding NavigateCommand}" CommandParameter="{Binding Main.SystemSupervisionViewName}" TileGlyph="{dx:DXImage Image=Home_32x32.png}" />
+            <dxnav:TileBarItem Background="#FF41C3D4" Content="{DynamicResource HistoryData}" Command="{Binding NavigateCommand}" CommandParameter="HistoryDataView" TileGlyph="{dx:DXImage Image=Database_32x32.png}" />
+            <!--<dxnav:TileBarItem Content="{DynamicResource HistoryData}" TileGlyph="{dx:DXImage Image=Database_32x32.png}" Background="#FFCC6D00">
+                <dxnav:TileBarItem.FlyoutContent>
+                    <dxnav:TileBar>
+                        <dxnav:TileBarItem Content="{DynamicResource AppRecord}" Command="{Binding NavigateCommand}" CommandParameter="HistoryDataView"/>
+                        <dxnav:TileBarItem Content="{DynamicResource DeviceRecord}" Command="{Binding NavigateCommand}" CommandParameter="DeviceHistoryDataView"/>
+                    </dxnav:TileBar>
+                </dxnav:TileBarItem.FlyoutContent>
+            </dxnav:TileBarItem>-->
+            <!--<dxnav:TileBarItem Visibility="{Binding SystemSetViewState}" Background="#FF13836A" Content="{DynamicResource Settings}" Command="{Binding NavigateCommand}" CommandParameter="SystemSetView" TileGlyph="{dx:DXImage Image=Properties_32x32.png}" />-->
+            <!--<dxnav:TileBarItem Visibility="{Binding EnableControlViewState}" Background="#FF226680" Content="{DynamicResource EnableSwitch}" Command="{Binding NavigateCommand}" CommandParameter="EnableControlView" TileGlyph="{dx:DXImageGrayscale Image=Customization_32x32.png}" />-->
+            <!--<dxnav:TileBarItem Visibility="{Binding DryContactSetViewState}" Background="#FF4E7C0C" Content="{DynamicResource DryContactSettings}" Command="{Binding NavigateCommand}" CommandParameter="{Binding DryContactSetViewName}" TileGlyph="pack://application:,,,/DevExpress.Images.v16.1;component/DevAV/Actions/ViewSetting_32x32.png" />-->
+            <!--<dxnav:TileBarItem Visibility="{Binding SystemSetGPS_4GViewState}" Content="{DynamicResource wlanParameter}" Command="{Binding NavigateCommand}" Background="#FF0988C3" CommandParameter="SystemSetGPS_4GView" TileGlyph="{dx:DXImageGrayscale Image=CellsAutoHeight-_32x32.png}" />-->
+            <!--<dxnav:TileBarItem Visibility="{Binding AgainstTheftViewState}" Content="{DynamicResource AntiTheft}" Command="{Binding NavigateCommand}" CommandParameter="AgainstTheftView" Background="#FF877D72" />-->
+            <!--<dxnav:TileBarItem Visibility="{Binding GyroSensorViewState}" Content="{DynamicResource GyroSensor}" Command="{Binding NavigateCommand}" CommandParameter="GyroSensorView" Background="#FFAA7C4D" TileGlyph="{dx:DXImageGrayscale Image=papersize_32x32.png}" />-->
+            <!--<dxnav:TileBarItem Content="程序注册" Visibility="{Binding IsAdministrator,Converter={StaticResource cvtBoolToVisibility}}" Command="{Binding NavigateCommand}" CommandParameter="RegisterView" Background="#FF0988C3" />-->
+            <!--<dxnav:TileBarItem Visibility="{Binding CPTViewState}" Content="通讯压力测试" Command="{Binding NavigateCommand}" CommandParameter="CPTView" Background="#FF583A66" />-->
+        </dxnav:TileBar>
+        <dxwui:NavigationFrame Margin="4" Grid.Row="1">
+            <!-- 触发 View 加载时的命令 -->
+            <dxmvvm:Interaction.Triggers>
+                <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnViewLoadedCommand}" />
+            </dxmvvm:Interaction.Triggers>
+            <dxmvvm:Interaction.Behaviors>
+                <Custom:FrameNavigationService />
+            </dxmvvm:Interaction.Behaviors>
+        </dxwui:NavigationFrame>
+        <dxwui:AppBar x:Name="appBar" Grid.Row="2" HideMode="AlwaysVisible" Margin="4,4,4,4" Background="#FFA5C5E6">
+            <StackPanel VerticalAlignment="Center">
+                <StackPanel Visibility="Collapsed" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label  Margin="0,5,0,0" Padding="4" Foreground="#FFCC789B" BorderBrush="#FFA5C5E6" BorderThickness="1" Content="BMS Time:" Background="#FFA5C5E6" />
+                    <TextBlock Margin="0,5,0,0" Padding="4" Foreground="#FF862D2D" Text="{Binding BMSTime}" Background="Black"></TextBlock>
+                </StackPanel>
+                <Label HorizontalAlignment="Center" Margin="0,0,0,0" Padding="4" Background="#FF828282" Foreground="White" BorderBrush="#FF2E2A2A" BorderThickness="1" Content="{Binding VerName}" RenderTransformOrigin="0.232,0.32" />
+                <Label Visibility="{Binding CustomerManagerState}"  Margin="10,4" Padding="4" Foreground="#FF9F9F9D" Content="Copyright @ HRB Coslight Group" />
+            </StackPanel>
+            <!--<dxwui:AppBarButton Visibility="{Binding CPTViewState}" HorizontalAlignment="Right" Glyph="{dx:DXImage Image=DocumentMap_32x32.png}" Label="通讯压力测试" Command="{Binding RetriveAvaliablePortCommand}">
+                <dxwui:AppBarButton.Flyout>
+                    <dxwui:MenuFlyout ShowIndicator="True" ItemsSource="{Binding AvaliablePorts}">
+                        <dxwui:MenuFlyout.ItemTemplate>
+                            <DataTemplate>
+                                <dxwui:MenuFlyoutItem Content="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType=dxwui:MenuFlyout}, Path=DataContext.CPTestCommand}" CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </dxwui:MenuFlyout.ItemTemplate>
+                    </dxwui:MenuFlyout>
+                </dxwui:AppBarButton.Flyout>
+            </dxwui:AppBarButton>-->
+            <!--<dxwui:AppBarButton HorizontalAlignment="Right" Label="{DynamicResource CommunicationType}" Command="{Binding InitializeCommunicationTypeCommand}" Background="{x:Null}" Glyph="{dx:DXImage Image=ComboBox_32x32.png}" Visibility="Collapsed">
+                <dxwui:AppBarButton.Flyout>
+                    <dxwui:MenuFlyout ShowIndicator="True" ItemsSource="{Binding ListCommunicationType}">
+                        <dxwui:MenuFlyout.ItemTemplate>
+                            <DataTemplate>
+                                <dxwui:MenuFlyoutItem Content="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType=dxwui:MenuFlyout}, Path=DataContext.CommunicationTypeSelectedCommand}" CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </dxwui:MenuFlyout.ItemTemplate>
+                    </dxwui:MenuFlyout>
+                </dxwui:AppBarButton.Flyout>
+            </dxwui:AppBarButton>-->
+            <!--<dxwui:AppBarButton Visibility="{Binding CommunicationTypeState}" HorizontalAlignment="Right" Glyph="{dx:DXImage Image=AlignVerticalCenter2_32x32.png}" Label="{DynamicResource SynchronizationTime}" Command="{Binding SynchronizationTimeCommand}">
+            </dxwui:AppBarButton>-->
+            <dxwui:AppBarButton HorizontalAlignment="Right"  Glyph="{dx:DXImage Image=SetDetailDataMember_32x32.png}" Label="{DynamicResource BaudRate}" Command="{Binding InitializeBaudRateCommand}" Background="#FFA5C5E6">
+                <dxwui:AppBarButton.Flyout>
+                    <dxwui:MenuFlyout ShowIndicator="True" ItemsSource="{Binding AvaliableBaudRate}">
+                        <dxwui:MenuFlyout.ItemTemplate>
+                            <DataTemplate>
+                                <dxwui:MenuFlyoutItem Content="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType=dxwui:MenuFlyout}, Path=DataContext.BaudRateSelectedCommand}" CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </dxwui:MenuFlyout.ItemTemplate>
+                    </dxwui:MenuFlyout>
+                </dxwui:AppBarButton.Flyout>
+            </dxwui:AppBarButton>
+            <dxwui:AppBarButton HorizontalAlignment="Right" Glyph="{dx:DXImage Image=DocumentMap_32x32.png}" Label="{DynamicResource Ports}" Command="{Binding RetriveAvaliablePortCommand}" Background="#FFA5C5E6">
+                <dxwui:AppBarButton.Flyout>
+                    <dxwui:MenuFlyout ShowIndicator="True" ItemsSource="{Binding AvaliablePorts}">
+                        <dxwui:MenuFlyout.ItemTemplate>
+                            <DataTemplate>
+                                <dxwui:MenuFlyoutItem Content="{Binding}" Command="{Binding RelativeSource={RelativeSource AncestorType=dxwui:MenuFlyout}, Path=DataContext.PortSelectedCommand}" CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </dxwui:MenuFlyout.ItemTemplate>
+                    </dxwui:MenuFlyout>
+                </dxwui:AppBarButton.Flyout>
+            </dxwui:AppBarButton>
+            <dxwui:AppBarButton Label="{DynamicResource Languages}" HorizontalAlignment="Right" Glyph="{dx:DXImage Image=Language_32x32.png}" IsCompact="False" Width="100" Background="#FFA5C5E6" >
+                <dxwui:AppBarButton.Flyout>
+                    <dxwui:MenuFlyout ShowIndicator="True">
+                        <dxwui:MenuFlyoutItem Content="中文" Command="{Binding SwitchToChineseCommand}" />
+                        <dxwui:MenuFlyoutItem Content="English" Command="{Binding SwitchToEnglishCommand}" />
+                    </dxwui:MenuFlyout>
+                </dxwui:AppBarButton.Flyout>
+            </dxwui:AppBarButton>
+        </dxwui:AppBar>
+
+    </Grid>
+</UserControl>

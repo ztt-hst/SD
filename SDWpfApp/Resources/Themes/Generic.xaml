@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate x:Key="batteryGroupHeaderTemplate">
+        <StackPanel Orientation="Horizontal">
+            <Image Source="/Coslight.TP._48V;component/Resources/Images/BatteryGroup.png" />
+            <TextBlock Margin="8,0,0,0" Text="{DynamicResource BatteryGroup}" />
+            <TextBlock Text="-" />
+            <TextBlock Margin="0,0,0,0" Text="{Binding Path=Data.BatteryGroupID}" />
+        </StackPanel>
+    </DataTemplate>
+
+</ResourceDictionary>
