@@ -38,7 +38,7 @@
                     <dxg:GridColumn FieldName="IsCommunicationEnabled" Header="{DynamicResource CommunicationEnable}" ReadOnly="False" Width="60">
                         <dxg:GridColumn.CellTemplate>
                             <DataTemplate>
-                                <dxe:CheckEdit IsChecked="{Binding Data.IsCommunicationEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <dxe:CheckEdit IsChecked="{Binding Data.IsCommunicationEnabled}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </DataTemplate>
                         </dxg:GridColumn.CellTemplate>
                     </dxg:GridColumn>
@@ -135,8 +135,8 @@
                 <!--<dxg:GridControlBand  Header="{DynamicResource PowerSupplyStatus}" HorizontalHeaderContentAlignment="Center">
                     <dxg:GridColumn FieldName="PreChargeStatus_Coslight" Header="{DynamicResource PreChargeStatus}" />
                     <dxg:GridColumn FieldName="PowerOnSwitchKeyStatus_Coslight" Header="{DynamicResource PowerKey}" />
-                </dxg:GridControlBand>
-                <dxg:GridControlBand  Header="{DynamicResource PowerSupplyMeasurement}" HorizontalHeaderContentAlignment="Center">
+                </dxg:GridControlBand>-->
+                <!--<dxg:GridControlBand  Header="{DynamicResource PowerSupplyMeasurement}" HorizontalHeaderContentAlignment="Center">
                     <dxg:GridColumn FieldName="DischargeMOSDriveVoltage_Coslight" Header="{DynamicResource DCHMOSDrive}">
                         <dxg:GridColumn.EditSettings>
                             <dxe:TextEditSettings DisplayFormat="F2" />

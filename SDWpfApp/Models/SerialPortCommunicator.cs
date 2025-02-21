@@ -12,6 +12,7 @@ using System.Threading;
 using DevExpress.Xpf.WindowsUI;
 using System.Windows;
 using SDWpfApp.ViewModels;
+using DevExpress.Mvvm;
 
 namespace SDWpfApp.Models
 {
@@ -51,9 +52,8 @@ namespace SDWpfApp.Models
         public static BootLaoderStatus BLStatus { get; set; }//20200502 BootLaoder状态枚举
         private ObservableCollection<Pack> PackCollection { get; set; }//电池包集
         private Timer CommunicationTimer;//定时器
-        
+          
         public SerialPortCommunicator(ObservableCollection<Pack> packCollection)//构造函数
-
         {
             MessagesToBeSent = new Queue<byte[]>();
             MessagesToBeSent_UserAction = new Queue<byte[]>();
@@ -135,11 +135,19 @@ namespace SDWpfApp.Models
         //端口名称改变
         public void OnPortNameChanged()
         {
-            ClosePort();
-
-            if (!string.IsNullOrEmpty(PortName))
+            try 
             {
-                StartPort();
+                Console.WriteLine($"Attempting to change port to: {PortName}");               
+                ClosePort();
+
+                if (!string.IsNullOrEmpty(PortName))
+                {
+                    StartPort();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in OnPortNameChanged: {ex.Message}");
             }
         }
         //发送

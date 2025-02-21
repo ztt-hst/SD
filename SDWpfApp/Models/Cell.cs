@@ -8,6 +8,7 @@ namespace SDWpfApp.Models
 {
     public class Cell
     {
+        public virtual int CellID { get; set; }
         public virtual float Voltage { get; set; }
         public virtual float Temperature { get; set; }
 

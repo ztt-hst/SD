@@ -6,11 +6,21 @@ using System.Threading.Tasks;
 using DevExpress.Mvvm.POCO;
 using System.Collections.ObjectModel;
 using DevExpress.Map.Native;
+using System.ComponentModel;
+using SDWpfApp.ViewModels;
 
 namespace SDWpfApp.Models
 {
-    public class Pack
+    public class Pack 
     {
+        private MainViewModel _mainViewModel; // 添加 MainViewModel 的引用
+
+        public Pack(MainViewModel mainViewModel) // 修改构造函数
+        {
+            _mainViewModel = mainViewModel; // 初始化引用
+            BatteryGroupCollection = new ObservableCollection<BatteryGroup>();
+        }
+
         public virtual float PowerTemperature { get; set; } //表示功率温度
         public virtual float DischargeEnergy { get; set; } //表示放电能量
         #region analog
@@ -78,7 +88,23 @@ namespace SDWpfApp.Models
         public virtual WarningType CellConsistencyProtection { get; set; }//20200528电池单体一致性保护状态
         public string BatteryType { get; set; }       // 电池类型
         public string ManufacturerCode { get; set; }  // 生产厂家编码
-        public virtual bool IsCommunicationEnabled { get; set; }    //通信是否使能
+        //public virtual bool IsCommunicationEnabled { get; set; }    //通信是否使能
+        private bool _isCommunicationEnabled;
+
+        public virtual bool IsCommunicationEnabled
+        {
+            get { return _isCommunicationEnabled; }
+            set 
+            { 
+                if (_isCommunicationEnabled != value)
+                {
+                    Console.WriteLine("IsCommunicationEnabled change");
+                    _isCommunicationEnabled = value;
+                    OnIsCommunicationEnabledChanged();
+                    Console.WriteLine("OnIsCommunicationEnabledChanged finish");
+                }
+            }
+        }
         public int CommunicationFailureCount { get; set; }      //通讯失败计数
         public virtual CommunicationStatus CommunicationStatus { get; set; }//通信的具体状态
         //public virtual bool IsCommunicationEnable { get; set; }//
@@ -88,11 +114,7 @@ namespace SDWpfApp.Models
 
         public static bool IsChineseUI { get; set; }//20200423中文显示
         public DateTime BMSTime { get; internal set; }//BMS时间
-        public Pack()
-        {
-            BatteryGroupCollection = new ObservableCollection<BatteryGroup>();
-        }
-        //当通信状态改变时，更新 CommunicationStatus
+
         public void OnIsCommunicationEnabledChanged()
         {
             if (!IsCommunicationEnabled)
@@ -109,7 +131,18 @@ namespace SDWpfApp.Models
             }
             else
             {
+                _mainViewModel.SimulateTestMessage(PackID); // 使用实例调用
                 SerialPortCommunicator.IsCommunicationFirst = true;
+            }         
+        }
+         //当 BatteryGroupCount 改变时，重新生成电池组集合
+        public void OnBatteryGroupCountChanged()
+        {
+            this.BatteryGroupCollection.Clear();
+
+            for (int i = 0; i != BatteryGroupCount; i++)
+            {
+                BatteryGroupCollection.Add(ViewModelSource.Create(() => new BatteryGroup { BatteryGroupID = i + 1 }));
             }
         }
 

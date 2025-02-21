@@ -4,12 +4,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DevExpress.Mvvm.POCO;
 
 namespace SDWpfApp.Models
 {
     public class BatteryGroup
     {
         #region analog
+        public virtual int BatteryGroupID { get; set; }//电池组ID
         public virtual ObservableCollection<WarningItem> WarningCollection { get; set; }//警告集
         public virtual ObservableCollection<Cell> CellCollection { get; set; }//单体电池集
         public virtual ObservableCollection<WarningItem> CoslightWarningCollection { get; set; }
@@ -50,7 +52,30 @@ namespace SDWpfApp.Models
 
         public BatteryGroup() 
         {
-
+            CellCollection = new ObservableCollection<Cell>();
+            WarningCollection = new ObservableCollection<WarningItem>();
+            CoslightWarningCollection = new ObservableCollection<WarningItem>();
         }
+        public void OnSingleCellVoltageCountChanged()
+        {
+            //取两者之大
+            CreateCellClooection(Math.Max(SingleCellVoltageCount, SingleCellTemperatureCount));
+        }
+        //单体电池温度数量变化
+        public void OnSingleCellTemperatureCountChanged()
+        {
+            CreateCellClooection(Math.Max(SingleCellVoltageCount, SingleCellTemperatureCount));
+        }
+        //清空现有的 CellCollection 集合，并根据 count 参数创建新的 Cell 实例，添加到集合
+        private void CreateCellClooection(int count)
+        {
+            CellCollection.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                CellCollection.Add(ViewModelSource.Create(() => new Cell { CellID = i + 1 }));
+            }
+        }
+
     }
 }

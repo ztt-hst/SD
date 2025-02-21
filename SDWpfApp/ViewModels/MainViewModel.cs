@@ -243,6 +243,88 @@ namespace SDWpfApp.ViewModels
             InitialSystem();
             IsZTE检测中心 = true;
         }
+        // 添加 SimulateTestMessage 方法
+    public void SimulateTestMessage(byte packId)
+    {
+        SerialPortCommunicator.LastSendCommandType = CommandType.读取模拟量;
+    
+        byte[] testMessage = new byte[] {
+            0x7E,       // SOI
+            0x20,       // VER
+            packId,     // ADR (设备地址)
+            0x00,       // 应答标志
+            0x00,       // 保留
+            0x4A,       // CID1
+            0x42,       // CID2
+            0x00,       // DATA_FLAG
+            packId,     // Pack ID
+            
+            0x10,       // 单体电池数量 (16)
+            
+            // 16个单体电池电压数据 (每个2字节)
+            0x0C, 0xB6, // 3256mV (3.256V)
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+            0x0C, 0xB6, // 3256mV
+
+            0x04,       // 电芯温度数量 (N=4)
+            
+            // 温度数据 (单位0.1K, 实际温度℃=(传送值-2731)/10)
+            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+            
+            // 环境温度
+            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+            // MOS温度
+            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+
+            // 电流数据 (2字节)
+            0x03, 0xE8, // 1000 -> 10A
+            
+            // 总电压数据 (2字节)
+            0x0F, 0xA0, // 4000 -> 40V
+            
+            // 电池剩余容量 (2字节)
+            0x0C, 0x80, // 3200 -> 32AH
+            
+            // 电池总容量 (2字节)
+            0x19, 0x00, // 6400 -> 64AH
+            
+            // 电池循环次数 (2字节)
+            0x00, 0x64, // 100次
+
+            0x01,       // 自定义遥测量数量P
+            
+            // SOH数据 (2字节)
+            0x00, 0x64, // 100%
+            
+            // 母线电压 (2字节)
+            0x0F, 0xA0, // 4000 -> 40V
+
+            0x00, 0x00, // CHKSUM
+            0x0D        // EOI
+        };
+
+        // 设置通信类型为DPC
+        communicationType = CommunicationType.DPC;
+
+        // 触发测试
+        communicator?.SimulateReceiveForTest(testMessage);
+    }
         //删除Temp文件夹下所有内容
         private void deleteTemp()
         {
@@ -267,9 +349,9 @@ namespace SDWpfApp.ViewModels
                         //如果存在则删除
                         Directory.Delete(path);
                     }
-                }
-                else
-                {
+        }
+        else
+        {
                     File.Delete(fsinfo.FullName);
                 }
             }
@@ -289,14 +371,15 @@ namespace SDWpfApp.ViewModels
         public void RetriveAvaliablePort()
         {
             AvaliablePorts = SerialPort.GetPortNames().ToList();
+            //SimulateTestMessage(0x01);
         }
         //选择串口,并创建HistoryData文件
         public void PortSelected(string portName)
         {
             communicator.PortName = portName;
-
+            MessageBoxService.Show("选择端口"+portName);
             communicator.OnPortNameChanged();//20200604
-
+            MessageBoxService.Show("选择端口"+portName+"完成");
             if (boolCommunicationTypeDPC)
             {
                 this.filePath = AppDomain.CurrentDomain.BaseDirectory + "HistoryData_DPC\\" + DateTime.Now.ToString("yyyy-MM-dd HHmmss") + ".dat";
@@ -592,12 +675,12 @@ namespace SDWpfApp.ViewModels
            
             for (byte i = 1; i != 17; i++)
             {
-                PackCollection.Add(ViewModelSource.Create(() => new Pack { PackID = i }));
+                PackCollection.Add(ViewModelSource.Create(() => new Pack(this){ PackID = i }));
 
             }
 
             //通讯
-            communicator = ViewModelSource.Create(() => new SerialPortCommunicator(PackCollection));
+             communicator = ViewModelSource.Create(() => new SerialPortCommunicator(PackCollection));
             this.communicator.ReceiveEvent += communicator_ReceiveEvent;//绑定接收处理事件
             this.communicator.ReceiveFailureEvent += Communicator_ReceiveFailureEvent;//处理接收失败事件
             //
@@ -618,44 +701,7 @@ namespace SDWpfApp.ViewModels
         //View Load
         public void OnViewLoaded()
         {
-            NavigationService.Navigate(SystemSupervisionViewName, null, this);
-             // 移动测试代码到这里，确保视图已加载
-            SerialPortCommunicator.LastSendCommandType = CommandType.读取模拟量;
-    
-            // 修改测试消息格式以匹配DPC协议
-            byte[] testMessage = new byte[] {
-                0x7E,       // SOI
-                0x20,       // VER
-                0x01,       // ADR (设备地址)
-                0x00,       // 应答标志 (0x00表示正常应答)
-                0x00,       // 保留
-                0x4A,       // CID1
-                0x42,       // CID2 (0x42表示遥测量信息)
-                0x00,       // Pack ID
-                0x01,       // Pack ID
-                // 模拟量数据 (按照大端格式排列)
-                0x00, 0x00, 0x11, 0x94,  // 总电压 (4500mV)
-                0x00, 0x00, 0x00, 0x64,  // 总电流 (100mA)
-                0x00, 0x00, 0x00, 0x32,  // SOC (50%)
-                0x00, 0x00, 0x00, 0x1E,  // 温度1 (30℃)
-                0x00, 0x00, 0x00, 0x1F,  // 温度2 (31℃)
-                0x00, 0x00, 0x00, 0x20,  // 温度3 (32℃)
-                0x00, 0x00, 0x00, 0x21,  // 温度4 (33℃)
-                0x00, 0x00,              // CHKSUM
-                0x0D                     // EOI
-            };
-
-            // 设置通信类型为DPC
-            communicationType = CommunicationType.DPC;
-    
-            // 启用第一个电池包的通信
-            if (PackCollection.Count > 0)
-            {
-                PackCollection[0].IsCommunicationEnabled = true;
-            }
-
-            // 触发测试
-            communicator?.SimulateReceiveForTest(testMessage);
+            NavigationService.Navigate(SystemSupervisionViewName, null, this);             
         }
         //导航
         public void Navigate(string view)
@@ -3732,10 +3778,10 @@ namespace SDWpfApp.ViewModels
         {
             if (message.Length != 0x8d)
             {
-                return;
-            }
+                    return;
+                }
 
-            int packAddress = message[2] - 1;
+                int packAddress = message[2] - 1;
 
             #region SystemParameterCollection
 
@@ -5243,8 +5289,8 @@ namespace SDWpfApp.ViewModels
         {
             if (message.Length != 0x4E)
             {
-                return;
-            }
+                    return;
+                }
 
             SerialPortCommunicator.ReadingDeviceRunningDataCounter = 0;
 
@@ -5332,8 +5378,8 @@ namespace SDWpfApp.ViewModels
 
             if (SerialPortCommunicator.IsReadingDeviceRunningData == 0)
             {
-                return;
-            }
+                    return;
+                }
             if (message[8] == 0x00)
             {
                 communicator.UserAction(ProtocalProvider.GetMessage_ReadDeviceRunningRecord_DPC(message[2], 0x01));
@@ -5477,8 +5523,8 @@ namespace SDWpfApp.ViewModels
 
             if (SerialPortCommunicator.IsReadingDeviceWarningData == 0)
             {
-                return;
-            }
+                    return;
+                }
             if (message[8] == 0x00)
             {
                 communicator.UserAction(ProtocalProvider.GetMessage_ReadDeviceWarningRecord(message[2], 0x01));
@@ -5570,6 +5616,11 @@ namespace SDWpfApp.ViewModels
         */
         private void communicator_ReceiveEvent(object sender, byte[] message)
         {
+            if (message == null)
+            {
+                MessageBoxService?.ShowMessage("接收到的消息为空");
+                return; // 处理 null 情况
+            }
             try
             {              
                 if (message[4] != 0x00)
@@ -5912,7 +5963,7 @@ namespace SDWpfApp.ViewModels
                 return;
             }
 
-            int offset = 9;
+            int offset = 9;           
             int packAddress = message[2] - 1;
             int enumValue = 0;
 
@@ -6048,37 +6099,49 @@ namespace SDWpfApp.ViewModels
         //解析模拟量
         private void ParseMessage_AnalogData_DPC(byte[] message)
         {
-            MessageBoxService.Show($"开始解析DPC模拟量数据, 消息长度: {message.Length}");
             //DATA_FLAG=0x00
             if (message[7] != 0x00)
             {
                 return;
             }
-                
+    
             int offset = 9;//位移           
             int packAddress = message[8] - 1;//上位机需要获取的 PACK 组位置
 
             PackCollection[packAddress].BatteryGroupCount = 1;
             int i = 0;
-            //单体电池数量
+            //单体电池电压数量
             PackCollection[packAddress].BatteryGroupCollection[i].SingleCellVoltageCount = message[offset++];
+
+            // 检查 CellCollection
+            if (PackCollection[packAddress].BatteryGroupCollection[i].CellCollection == null)
+            {
+                MessageBoxService.Show("CellCollection 是 null");
+            }
+            MessageBoxService.Show("CellCollection "+PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Count);
             if (PackCollection[packAddress].BatteryGroupCollection[i].SingleCellVoltageCount == PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Count)
             {
+                MessageBoxService.Show("解析单体电池电压");
                 for (int j = 0; j != PackCollection[packAddress].BatteryGroupCollection[i].SingleCellVoltageCount; j++)
                 {
                     //单体电池 j 电压 实际值=传送值/1000；
                     PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[j].Voltage = BitConverter.ToUInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.001F; 
                     offset += 2;
+                    //MessageBoxService.Show("单体电池电压"+PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[j].Voltage);
 
                 }
             }
+
             //计算平均电压
             PackCollection[packAddress].BatteryGroupCollection[i].AverageVoltage_Coslight = PackCollection[packAddress].AverageVoltage_Coslight = PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Average(cell => cell.Voltage);//20200611
+            MessageBoxService.Show("平均电压"+PackCollection[packAddress].BatteryGroupCollection[i].AverageVoltage_Coslight);
+
             //电芯温度数量
             PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount = message[offset++] - 2;//为什么-2???
             //解析电芯温度
             if (PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount <= PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Count)
             {
+                MessageBoxService.Show("解析单体电池温度");
                 for (int j = 0; j != PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount; j++)
                 {
                     //电芯温度 j 数据 传输数值单位0.1K
@@ -6102,11 +6165,11 @@ namespace SDWpfApp.ViewModels
             // 电池电流数据 /100A
             PackCollection[packAddress].BatteryGroupCurrent = PackCollection[packAddress].BatteryGroupCollection[i].BatteryGroupCurrent = BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.01F; 
             offset += 2;
-
+            MessageBoxService.Show("电池电流数据"+PackCollection[packAddress].BatteryGroupCurrent);
             // 电池总压数据 /100V
-            PackCollection[packAddress].BatteryGroupVoltage = PackCollection[packAddress].BatteryGroupCollection[i].BatteryGroupVoltage = BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.01F; 
+            PackCollection[packAddress].BatteryGroupVoltage = PackCollection[packAddress].BatteryGroupCollection[i].BatteryGroupVoltage = BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.01F;            
             offset += 2;
-
+            MessageBoxService.Show("电池电压数据"+PackCollection[packAddress].BatteryGroupVoltage);
             // 电池剩余容量 /100AH
             PackCollection[packAddress].SOC = PackCollection[packAddress].BatteryGroupCollection[i].SOC = BitConverter.ToUInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.01F; 
             offset += 2;
@@ -8713,5 +8776,5 @@ namespace SDWpfApp.ViewModels
                 SerialPortCommunicator.IsReadingDeviceEventData = 0;
             }
         }
-    }
-}
+            }
+        }
