@@ -61,7 +61,7 @@
                             <dxe:TextEditSettings DisplayFormat="F2" />
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
-                    <dxg:GridColumn FieldName="SOC_ZTE" Header="SOC(%)">
+                    <dxg:GridColumn FieldName="SOC" Header="SOC(%)">
                         <dxg:GridColumn.EditSettings>
                             <dxe:TextEditSettings DisplayFormat="F0" />
                         </dxg:GridColumn.EditSettings>

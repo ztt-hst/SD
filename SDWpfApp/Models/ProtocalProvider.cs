@@ -153,10 +153,10 @@ namespace SDWpfApp.Models
             message[7] = 0x34;//CID2
             message[8] = 0x42;//CID2
 
-            message[9] = CalculateLength(lenID, 4, 1);//LENGTH
-            message[10] = CalculateLength(lenID, 4, 2);//LENGTH
-            message[11] = CalculateLength(lenID, 4, 3);//LENGTH
-            message[12] = CalculateLength(lenID, 4, 4);//LENGTH
+            message[9] = CalculateLength(lenID, 4, 1);//LENGTH LCHKSUM
+            message[10] = CalculateLength(lenID, 4, 2);//LENGTH LENID
+            message[11] = CalculateLength(lenID, 4, 3);//LENGTH LENID
+            message[12] = CalculateLength(lenID, 4, 4);//LENGTH LENID
 
             message[13] = CalculateASCLL(commandType, 2, 1);
             message[14] = CalculateASCLL(commandType, 2, 2);
@@ -278,6 +278,20 @@ namespace SDWpfApp.Models
             }
             byte[] commandType = new byte[0];//数据部分初始化为空数组，表示当前命令不需要额外的数据
             return GetMessage(0x20, packID, 0x4A, CID2, lenID, packID, commandType);
+        }
+        //
+        internal static byte[] SendMessage(byte packID, CID2_Type type, byte[] commandType)
+        {
+            int CID2 = 0x42;
+            int lenID = 2;
+            switch (type)
+            {
+                case CID2_Type.遥控命令:
+                    lenID = 4;     // modfiy by sunlw 2020-10-31 16:49
+                    CID2 = 0x45;
+                    break;
+            }
+            return GetMessage(SerialPortCommunicator.CommunicationProtocoVersionNumber, packID, 0x4A, CID2, lenID, packID, commandType);
         }
         //读取设备事件记录
         internal static byte[] GetMessage_ReadDeviceEventRecord(byte address, byte commandType)//20200610

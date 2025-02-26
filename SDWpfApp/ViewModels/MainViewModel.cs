@@ -15,6 +15,7 @@ using System.IO.Ports;
 using System.Configuration;
 using static DevExpress.Utils.Frames.FrameHelper;
 using DevExpress.Xpf.WindowsUI.Navigation;
+using System.ComponentModel;
 
 
 namespace SDWpfApp.ViewModels
@@ -146,6 +147,7 @@ namespace SDWpfApp.ViewModels
         public virtual string StateContectInformation { get; set; }
         private string FileFolder { get; set; }
         public virtual BootLoaderFileNameCheck bootLoaderFileNameCheck { get; set; }
+        public UnZipFloderClass unZipFloderClass = new UnZipFloderClass();
         #endregion BootLoader
         #region 陀螺仪
         public static bool IsReadGyroSensorAnolog { get; set; }
@@ -244,87 +246,87 @@ namespace SDWpfApp.ViewModels
             IsZTE检测中心 = true;
         }
         // 添加 SimulateTestMessage 方法
-    public void SimulateTestMessage(byte packId)
-    {
-        SerialPortCommunicator.LastSendCommandType = CommandType.读取模拟量;
+        public void SimulateTestMessage(byte packId)
+        {
+            SerialPortCommunicator.LastSendCommandType = CommandType.读取模拟量;
     
-        byte[] testMessage = new byte[] {
-            0x7E,       // SOI
-            0x20,       // VER
-            packId,     // ADR (设备地址)
-            0x00,       // 应答标志
-            0x00,       // 保留
-            0x4A,       // CID1
-            0x42,       // CID2
-            0x00,       // DATA_FLAG
-            packId,     // Pack ID
+            byte[] testMessage = new byte[] {
+                0x7E,       // SOI
+                0x20,       // VER
+                packId,     // ADR (设备地址)
+                0x00,       // 应答标志
+                0x00,       // 保留
+                0x4A,       // CID1
+                0x42,       // CID2
+                0x00,       // DATA_FLAG
+                packId,     // Pack ID
             
-            0x10,       // 单体电池数量 (16)
+                0x10,       // 单体电池数量 (16)
             
-            // 16个单体电池电压数据 (每个2字节)
-            0x0C, 0xB6, // 3256mV (3.256V)
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
-            0x0C, 0xB6, // 3256mV
+                // 16个单体电池电压数据 (每个2字节)
+                0x0C, 0xB6, // 3256mV (3.256V)
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
+                0x0C, 0xB6, // 3256mV
 
-            0x04,       // 电芯温度数量 (N=4)
+                0x04,       // 电芯温度数量 (N=4)
             
-            // 温度数据 (单位0.1K, 实际温度℃=(传送值-2731)/10)
-            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
-            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
-            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
-            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+                // 温度数据 (单位0.1K, 实际温度℃=(传送值-2731)/10)
+                0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+                0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+                0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+                0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
             
-            // 环境温度
-            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
-            // MOS温度
-            0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+                // 环境温度
+                0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
+                // MOS温度
+                0x0B, 0xAA, // 2986 (0.1K) -> 25.5℃
 
-            // 电流数据 (2字节)
-            0x03, 0xE8, // 1000 -> 10A
+                // 电流数据 (2字节)
+                0x03, 0xE8, // 1000 -> 10A
             
-            // 总电压数据 (2字节)
-            0x0F, 0xA0, // 4000 -> 40V
+                // 总电压数据 (2字节)
+                0x0F, 0xA0, // 4000 -> 40V
             
-            // 电池剩余容量 (2字节)
-            0x0C, 0x80, // 3200 -> 32AH
+                // 电池剩余容量 (2字节)
+                0x0C, 0x80, // 3200 -> 32AH
             
-            // 电池总容量 (2字节)
-            0x19, 0x00, // 6400 -> 64AH
+                // 电池总容量 (2字节)
+                0x19, 0x00, // 6400 -> 64AH
             
-            // 电池循环次数 (2字节)
-            0x00, 0x64, // 100次
+                // 电池循环次数 (2字节)
+                0x00, 0x64, // 100次
 
-            0x01,       // 自定义遥测量数量P
+                0x01,       // 自定义遥测量数量P
             
-            // SOH数据 (2字节)
-            0x00, 0x64, // 100%
+                // SOH数据 (2字节)
+                0x00, 0x64, // 100%
             
-            // 母线电压 (2字节)
-            0x0F, 0xA0, // 4000 -> 40V
+                // 母线电压 (2字节)
+                0x0F, 0xA0, // 4000 -> 40V
 
-            0x00, 0x00, // CHKSUM
-            0x0D        // EOI
-        };
+                0x00, 0x00, // CHKSUM
+                0x0D        // EOI
+            };
 
-        // 设置通信类型为DPC
-        communicationType = CommunicationType.DPC;
+            // 设置通信类型为DPC
+            communicationType = CommunicationType.DPC;
 
-        // 触发测试
-        communicator?.SimulateReceiveForTest(testMessage);
-    }
+            // 触发测试
+            communicator?.SimulateReceiveForTest(testMessage);
+        }
         //删除Temp文件夹下所有内容
         private void deleteTemp()
         {
@@ -429,6 +431,7 @@ namespace SDWpfApp.ViewModels
 
             IsReadParameter = true;
         }
+        
         //ZTE通讯读取
         internal void ReadSpecialValue_ZTE(byte packAddress)
         {
@@ -525,6 +528,21 @@ namespace SDWpfApp.ViewModels
                     }
                 }
             }
+        }
+        //读取系统设置
+        internal void ReadSystemSetting_DPC(byte packAddress)
+        {
+            SelectedPackAddress = packAddress;
+
+            this.SystemParameterCollection.Clear();
+            this.SystemParameter_1_Collection.Clear();
+
+            IsReadParameter = true;
+            if (SerialPortCommunicator.CommunicationProtocoVersionNumber == 0)
+            {
+                communicator.UserAction(ProtocalProvider.SendMessage(packAddress, CID2_Type.获取通信协议版本号));
+            }
+            communicator.UserAction(ProtocalProvider.SendMessage(packAddress, CID2_Type.获取遥调量信息));
         }
         //切换成中文
         public void SwitchToChinese()
@@ -706,32 +724,37 @@ namespace SDWpfApp.ViewModels
         //导航
         public void Navigate(string view)
         {
-            if (view == null)
+            if (view == null)//初始默认页面
             {
                 view = SystemSupervisionViewName;
             }
+            //
             if (communicationType == CommunicationType.DPC || communicationType == CommunicationType.移动)
             {
                 IsHistoryDataViewActivated = view == "HistoryDataView";
 
                 IsDeviceHistoryDataViewActivated = view == "DeviceHistoryDataView";
 
+                //当前页
                 currentView = view;
 
                 if (LastView == null)
                 {
                     LastView = SystemSupervisionViewName;
                 }
-
+                //上次页面为SystemSupervisionViewName && 当前页不是"SystemSetView" && 当前页不等于上一页
                 if (LastView == SystemSupervisionViewName && currentView != "SystemSetView" && currentView != LastView)
                 {
+                    //清空通讯状态
                     foreach (Pack pack in this.PackCollection)//20200719
                     {
                         pack.IsCommunicationEnabled = false;
                     }
                 }
+                //上个页面是BootLoaderView并且当前页不是上一页
                 if (LastView == "BootLoaderView" && currentView != LastView)
                 {
+                    //重设波特率为9600
                     if (communicator.intBaudRate == 19200)
                     {
                         communicator.intBaudRate = 9600;
@@ -743,6 +766,7 @@ namespace SDWpfApp.ViewModels
 
                 LastView = view;//20200508
 
+                //当前页为"BootLoaderView"
                 if (currentView == "BootLoaderView")//20200508
                 {
 
@@ -756,7 +780,7 @@ namespace SDWpfApp.ViewModels
 
                 NavigationService.Navigate(view, null, this);
             }
-            else
+            else//其他通讯
             {
                 if (SerialPortCommunicator.Manager == AuthorizationManager.开发版)
                 {
@@ -8776,5 +8800,250 @@ namespace SDWpfApp.ViewModels
                 SerialPortCommunicator.IsReadingDeviceEventData = 0;
             }
         }
+        public void FileOpen()
+        {
+            ProjectCodeRead = "";
+            COSPowerCodeRead = "";
+            DevelopmentPhaseRead = "";
+            VersionNumber1Read = "";
+            VersionNumber2Read = "";
+
+            VersionNumber3Read = "";
+            OtherRead = "";
+
+            ProjectCodeWrite = "";
+            COSPowerCodeWrite = "";
+            DevelopmentPhaseWrite = "";
+            VersionNumber1Write = "";
+            VersionNumber2Write = "";
+
+            VersionNumber3Write = "";
+            OtherWrite = "";
+            frameCode = 0;
+
+            if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Temp"))
+            {
+                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Temp");
+            }
+
+            SerialPortCommunicator.BLStatus = BootLaoderStatus.应用程序;
+
+            isWriteSuccess = false;
+
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog.Filter = "DataFile (*.zip)|*.zip";
+
+            openFileDialog.RestoreDirectory = true;
+
+            openFileDialog.FilterIndex = 1;
+
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                BootLaoderFileNameWriteZip = openFileDialog.FileName.Substring(openFileDialog.FileName.LastIndexOf("\\") + 1);
+                unZipFloderClass.unZipFile(openFileDialog.FileName, AppDomain.CurrentDomain.BaseDirectory + "Temp");
+                FileFolder = BootLaoderFileNameWriteZip.Substring(0, BootLaoderFileNameWriteZip.IndexOf(".zip"));
+                if (!(Director(AppDomain.CurrentDomain.BaseDirectory + "Temp\\" + FileFolder)))
+                {
+                    if (Pack.IsChineseUI)
+                    {
+                        StateContectInformation = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "：文件错误：" + bootLoaderFileNameCheck + "！";
+                    }
+                    else
+                    {
+                        StateContectInformation = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy") + ":Error File:" + (BootLoaderFileNameCheck)((int)bootLoaderFileNameCheck + 0x10) + "!";
+                    }
+                }
+                else
+                {
+
+                    if (Pack.IsChineseUI)
+                    {
+                        StateContectInformation = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "：加载文件成功！";
+                    }
+                    else
+                    {
+                        StateContectInformation = DateTime.Now.ToString("HH:mm:ss dd/MM/yyyy") + ":Success:File Loading!";
+                    }
+                }
             }
         }
+        //检查密码
+        internal bool CheckPassword()
+        {
+            return true; //内测版使用
+        }
+        internal void BootLoader_FlashErases()//20200609
+        {
+            if (CheckPassword() != true)
+            {
+                return;
+            }
+
+            ProjectCodeRead = "";
+            COSPowerCodeRead = "";
+            DevelopmentPhaseRead = "";
+            VersionNumber1Read = "";
+            VersionNumber2Read = "";
+
+            VersionNumber3Read = "";
+            OtherRead = "";
+
+            ProjectCodeWrite = "";
+            COSPowerCodeWrite = "";
+            DevelopmentPhaseWrite = "";
+            VersionNumber1Write = "";
+            VersionNumber2Write = "";
+
+            VersionNumber3Write = "";
+            OtherWrite = "";
+            frameCode = 0;
+
+            isWriteSuccess = false;
+
+            SerialPortCommunicator.BLStatus = BootLaoderStatus.应用程序连接中;
+            isErases = true;
+        }
+        private BootLoaderFileNameCheck checkFileNameWrite(string fileName)
+        {
+            bool isBootWrite = false;
+            bool isApplicationWrite = false;
+
+            bootLoaderFileNameCheck = BootLoaderFileNameCheck.OK;
+
+            if (fileName.Substring(fileName.Length - 4) != ".bin")
+            {
+                bootLoaderFileNameCheck = BootLoaderFileNameCheck.文件格式错误_加载文件;
+            }
+
+            string BootLaoderFileNameWriteTemp = fileName.Substring(fileName.LastIndexOf("\\") + 1);
+
+            BootLaoderFileNameWriteTemp = BootLaoderFileNameWriteTemp.Substring(0, BootLaoderFileNameWriteTemp.IndexOf("."));
+
+            string[] temp = Regex.Split(BootLaoderFileNameWriteTemp, "_", RegexOptions.IgnoreCase);
+
+            for (int i = 0; i < temp.Length; i++)
+            {
+                if (String.Compare(temp[i], "boot", true) == 0)
+                {
+                    isBootWrite = true;
+                    isApplicationWrite = false;
+                    break;
+                }
+
+                isBootWrite = false;
+                isApplicationWrite = true;
+            }
+
+            if (isBootWrite)
+            {
+                if (temp.Length < 5)
+                {
+                    bootLoaderFileNameCheck = BootLoaderFileNameCheck.文件名长度错误_加载文件;
+                }
+                else
+                {
+
+                    if (temp[0] != "CNCT")
+                    {
+                        bootLoaderFileNameCheck = BootLoaderFileNameCheck.光宇代码错误_加载文件;
+                    }
+
+                    BootLoaderFileName = BootLaoderFileNameWriteTemp;
+                }
+            }
+
+            if (isApplicationWrite)
+            {
+                if (temp.Length < 7)
+                {
+                    bootLoaderFileNameCheck = BootLoaderFileNameCheck.文件名长度错误_加载文件;
+                }
+                else
+                {
+                    if (temp[1] != "CNCT")
+                    {
+                        bootLoaderFileNameCheck = BootLoaderFileNameCheck.光宇代码错误_加载文件;
+                    }
+
+                    if (temp[0].Substring(0, 2) != "ZX")
+                    {
+                        bootLoaderFileNameCheck = BootLoaderFileNameCheck.项目代码错误_加载文件;
+                    }
+
+                    if (temp[5].Substring(0, 2) != "TB")
+                    {
+                        bootLoaderFileNameCheck = BootLoaderFileNameCheck.电芯材料错误_加载文件;
+                    }
+
+                    if (temp[4] == "0001")
+                    {
+                        ApplicationFileName01 = BootLaoderFileNameWriteTemp;
+                    }
+                    else
+                    {
+                        ApplicationFileName02 = BootLaoderFileNameWriteTemp;
+                    }
+                }
+            }
+
+            return bootLoaderFileNameCheck;
+        }
+        internal void BootLoader_ApplicationConnection()
+        {
+            SerialPortCommunicator.BLStatus = BootLaoderStatus.应用程序连接中;
+            isErases = false;
+            isApplicationRead = true;
+            isBootRead = false;
+        }
+
+        internal void BootLoader_BootLoaderConnection()
+        {
+            if (CheckPassword() != true)
+            {
+                return;
+            }
+            isErases = false;
+            SerialPortCommunicator.BLStatus = BootLaoderStatus.BootLoader连接中;
+            isBootRead = true;
+            isApplicationRead = false;
+
+        }
+        private bool Director(string dir)
+        {
+            DirectoryInfo d = new DirectoryInfo(dir);
+            FileSystemInfo[] fsinfos = d.GetFileSystemInfos();
+
+            if (fsinfos.Length < 3)
+            {
+                bootLoaderFileNameCheck = BootLoaderFileNameCheck.压缩文件错误;
+                return false;
+            }
+
+            foreach (FileSystemInfo fsinfo in fsinfos)
+            {
+                if (fsinfo is DirectoryInfo)     //判断是否为文件夹
+                {
+                    bootLoaderFileNameCheck = BootLoaderFileNameCheck.压缩文件错误;
+                    return false;
+                }
+                else
+                {
+                    bootLoaderFileNameCheck = checkFileNameWrite(fsinfo.FullName);
+                    if (bootLoaderFileNameCheck != BootLoaderFileNameCheck.OK)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(BootLoaderFileName) || string.IsNullOrEmpty(ApplicationFileName01) || string.IsNullOrEmpty(ApplicationFileName02))
+            {
+                bootLoaderFileNameCheck = BootLoaderFileNameCheck.压缩文件错误;
+                return false;
+            }
+
+            isWriteSuccess = true;
+            return true;
+        }
+    }
+}

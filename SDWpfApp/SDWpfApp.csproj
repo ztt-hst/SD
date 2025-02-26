@@ -355,6 +355,7 @@
     <Compile Include="Models\SerialPortCommunicator.cs" />
     <Compile Include="Models\SpecialParameter.cs" />
     <Compile Include="Models\SystemParameter.cs" />
+    <Compile Include="Models\UnZipFloderClass.cs" />
     <Compile Include="Models\WarningItem.cs" />
     <Compile Include="Models\XlsFileControler.cs" />
     <Compile Include="ViewModels\HistoryDataViewModel.cs" />
