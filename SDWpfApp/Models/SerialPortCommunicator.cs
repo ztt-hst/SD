@@ -13,7 +13,6 @@ using DevExpress.Xpf.WindowsUI;
 using System.Windows;
 using SDWpfApp.ViewModels;
 using DevExpress.Mvvm;
-//using System.Windows.Forms;
 
 namespace SDWpfApp.Models
 {
@@ -103,7 +102,7 @@ namespace SDWpfApp.Models
                       FloatingMode.Adorner);
                 return;
             }
-
+            //2s后执行一次
             CommunicationTimer = new Timer(CommunicationTimer_Elapsed, null, 0, 2000);
         }
         //关闭端口
@@ -156,7 +155,7 @@ namespace SDWpfApp.Models
         {
             try
             {
-                Receive();//？？？接收上一次的返回信息
+                Receive();//？？？接收
                 if (BLStatus == BootLaoderStatus.BootLoader已连接 || BLStatus == BootLaoderStatus.应用程序已连接)
                 {
                     Thread.Sleep(500);//延迟500毫秒，确保稳定
@@ -173,10 +172,6 @@ namespace SDWpfApp.Models
                 }
                 // 保存上次发送命令信息
                 SaveLastSendCommandInfo(message);
-                // 在发送前弹窗显示 message 内容
-                string messageContent = BitConverter.ToString(message); // 将 message 转为十六进制字符串
-                //MessageBox.Show("即将发送的消息：\n" + messageContent, "发送消息内容", MessageBoxButton.OK, MessageBoxImage.Information);
-
                 // DPC通信
                 if (MainViewModel.communicationType == CommunicationType.DPC)
                 {
@@ -191,16 +186,12 @@ namespace SDWpfApp.Models
                     LastCommunicationDeviceAddress = Convert.ToByte(ProtocalProvider.ASCIIToString(message[3]) + ProtocalProvider.ASCIIToString(message[4]), 16);
                 }
 
-                //MessageBox.Show("消息生成成功！", , MessageBoxButton.OK, MessageBoxImage.Information);
                 this.port.DiscardInBuffer();//清理输入缓冲区
                 this.port.Write(message, 0, message.Length);//将消息写入串口
-                                                            // 发送成功提示
-                //MessageBox.Show("消息发送成功！", "发送成功", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            catch (Exception ex)
+            catch
             {
-                // 发送失败提示，显示错误信息
-                //MessageBox.Show($"消息发送失败: {ex.Message}", "发送失败", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
         }
         //接收
@@ -224,7 +215,7 @@ namespace SDWpfApp.Models
                     ReceiveEvent(this, ProtocalProvider.CalculateHexMessage(message));
                 }
 
-                LastCommunicationDeviceAddress = 0;//上一次信息已回应
+                LastCommunicationDeviceAddress = 0;
             }
         }
         //收集信息
@@ -275,7 +266,7 @@ namespace SDWpfApp.Models
                     //生成BootLoaderFlash擦除命令并加入队列
                     MessagesToBeSent_UserAction.Enqueue(ProtocalProvider.GetMessage_BootLaoderFlashErases(IsBootLaoderBMSConnection));
                 }
-                else if (IsReadingDeviceRunningData != 0 && ReadingDeviceRunningDataCounter <= 4)//设备运行数据
+                else if (IsReadingDeviceRunningData != 0 && ReadingDeviceRunningDataCounter <= 4)//???
                 {
                     ReadingDeviceRunningDataCounter++;//计数++
                     if (MainViewModel.communicationType == CommunicationType.DPC)//DPC通讯
@@ -291,7 +282,7 @@ namespace SDWpfApp.Models
                     }
                     return;
                 }
-                else if (IsReadingDeviceWarningData != 0 && ReadingDeviceWarningDataCounter <= 4)//设备警告数据
+                else if (IsReadingDeviceWarningData != 0 && ReadingDeviceWarningDataCounter <= 4)
                 {
                     ReadingDeviceWarningDataCounter++;//计数++
                     if (MainViewModel.communicationType == CommunicationType.DPC)//
@@ -306,7 +297,7 @@ namespace SDWpfApp.Models
                     }
                     return;
                 }
-                else if (IsReadingDeviceEventData != 0 && ReadingDeviceEventDataCounter <= 4)//设备事件
+                else if (IsReadingDeviceEventData != 0 && ReadingDeviceEventDataCounter <= 4)//20200610
                 {
                     ReadingDeviceEventDataCounter++;//计数++
                     //获取读取设备事件记录的命令并加入队列
@@ -347,11 +338,11 @@ namespace SDWpfApp.Models
                         {
                             if (CommunicationProtocoVersionNumber == 0)//通讯协议版本号为0
                             {
-                                //获取版本号 √
+                                //获取版本号
                                 MessagesToBeSent.Enqueue(ProtocalProvider.SendMessage(pack.PackID, CID2_Type.获取通信协议版本号));
-
                             }
-                            else if (string.IsNullOrEmpty(pack.ManufacturerName))//生产产商名称为空
+                            else
+                            if (string.IsNullOrEmpty(pack.ManufacturerName))//生产产商名称为空
                             {
                                 MessagesToBeSent.Enqueue(ProtocalProvider.SendMessage(pack.PackID, CID2_Type.获取设备厂商信息));
                             }
@@ -368,8 +359,12 @@ namespace SDWpfApp.Models
                             {
                                 MessagesToBeSent.Enqueue(ProtocalProvider.GetMessage_ManufacturerInfo(pack.PackID));
                             }
+                            //else if (pack.ManufacturerName == "ZTE-C" && pack.SystemName == "FB150C")//20200418
                             else//非空
+                            //if (pack.ManufacturerName == "ZTE-C")
                             {
+                                //if (pack.AntiThief == WarningType.正常)
+                                //{
                                 if (MainViewModel.communicationType == CommunicationType.ZTE邮电)//通讯类型为ZTE邮电
                                 {
                                     MessagesToBeSent.Enqueue(ProtocalProvider.GetMessage_ReadWarning_Coslight(pack.PackID));//读取Coslight警告
@@ -386,6 +381,8 @@ namespace SDWpfApp.Models
                                     MessagesToBeSent.Enqueue(ProtocalProvider.GetMessage_ReadStatus(pack.PackID));
                                     MessagesToBeSent.Enqueue(ProtocalProvider.GetMessage_ReadWarning(pack.PackID));
                                 }
+
+                                //}
                             }
                         }
                     }
@@ -399,7 +396,7 @@ namespace SDWpfApp.Models
             //
             if (message[5] == 0x34 && message[6] == 0x41)   // 判断CID1=4A modify by sunlw 2020-10-31 17:21
             {
-                if (message[7] == 0x34 && message[8] == 0x32) //CID2
+                if (message[7] == 0x34 && message[8] == 0x32)
                 {
                     LastSendCommandType = CommandType.读取模拟量;
                 }
@@ -477,7 +474,7 @@ namespace SDWpfApp.Models
                     CommunicationTimer.Change(1000, 1000);
                 }
             }
-            else if (message[5] == 0x34 && message[6] == 0x37) //CID1=0x47
+            else if (message[5] == 0x34 && message[6] == 0x37)
             {
                 if (message[7] == 0x41 && message[8] == 0x31)//20200426
                 {

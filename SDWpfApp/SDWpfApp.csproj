@@ -445,6 +445,26 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\battery-charge.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\battery-discharge.png" />
+    <Resource Include="Resources\Images\BatteryGroup.png" />
+    <Resource Include="Resources\Images\blue.png" />
+    <Resource Include="Resources\Images\BV_Protection.png" />
+    <Resource Include="Resources\Images\BV_Warning.png" />
+    <Resource Include="Resources\Images\gray.png" />
+    <Resource Include="Resources\Images\green.png" />
+    <Resource Include="Resources\Images\GyroSensorBG.jpg" />
+    <Resource Include="Resources\Images\null.png" />
+    <Resource Include="Resources\Images\OV_Protection.png" />
+    <Resource Include="Resources\Images\OV_Warning.png" />
+    <Resource Include="Resources\Images\Protection.png" />
+    <Resource Include="Resources\Images\red.png" />
+    <Resource Include="Resources\Images\system.png" />
+    <Resource Include="Resources\Images\Warning.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\DevExpress.Reporting.Core.24.2.3\build\DevExpress.Reporting.Core.targets" Condition="Exists('..\packages\DevExpress.Reporting.Core.24.2.3\build\DevExpress.Reporting.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

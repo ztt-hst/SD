@@ -10,7 +10,7 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
 >
 
-    <SolidColorBrush x:Key="dataCellBorderBrush" Color="#FFE8D4D4" />
+    <SolidColorBrush x:Key="dataCellBorderBrush" Color="#FFDADADA" />
     
     <cvt:BackColorConverter x:Key="cvtBackColorConverter"/>
     <cvt:BoolToVisibilityConverter x:Key="cvtBoolToVisibility"/>
@@ -52,7 +52,7 @@
     </Style>
     <DataTemplate x:Key="batteryGroupHeaderTemplate">
         <StackPanel Orientation="Horizontal">
-            <Image Source="/Coslight.TP._48V;component/Resources/Images/BatteryGroup.png" />
+            <Image Source="/SDWpfApp;component/Resources/Images/BatteryGroup.png" />
             <TextBlock Margin="8,0,0,0" Text="{DynamicResource BatteryGroup}" />
             <TextBlock Text="-" />
             <TextBlock Margin="0,0,0,0" Text="{Binding Path=Data.BatteryGroupID}" />
@@ -76,24 +76,24 @@
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>
                         <StackPanel  Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
-                            <Label Content="{DynamicResource PackVoltage}" HorizontalAlignment="Center" Foreground="#FFCED9E0" />
+                            <Label Content="{DynamicResource PackVoltage}" HorizontalAlignment="Center" Foreground="#FF4282BD" />
                             <dxga:DigitalGaugeControl Text="{Binding DataContext.BatteryGroupVoltage,StringFormat={}{0:F2}}" SymbolCount="7" Width="130" Margin="4,0">
                                 <dxga:DigitalGaugeControl.Layers>
                                     <dxga:DigitalGaugeLayer />
                                 </dxga:DigitalGaugeControl.Layers>
                                 <dxga:DigitalGaugeControl.Model>
-                                    <dxga:DigitalProgressiveModel />
+                                    <dxga:DigitalMagicLightModel/>
                                 </dxga:DigitalGaugeControl.Model>
                             </dxga:DigitalGaugeControl>
                         </StackPanel>
                         <StackPanel  Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
-                            <Label Content="{DynamicResource PackCurrent}" HorizontalAlignment="Center" Foreground="#FFCED9E0" />
+                            <Label Content="{DynamicResource PackCurrent}" HorizontalAlignment="Center" Foreground="#FF4282BD" />
                             <dxga:DigitalGaugeControl Text="{Binding DataContext.BatteryGroupCurrent,StringFormat={}{0:F2}}" SymbolCount="7" Width="130" Margin="4,0">
                                 <dxga:DigitalGaugeControl.Layers>
                                     <dxga:DigitalGaugeLayer />
                                 </dxga:DigitalGaugeControl.Layers>
                                 <dxga:DigitalGaugeControl.Model>
-                                    <dxga:DigitalProgressiveModel />
+                                    <dxga:DigitalMagicLightModel/>
                                 </dxga:DigitalGaugeControl.Model>
                             </dxga:DigitalGaugeControl>
                         </StackPanel>
@@ -125,7 +125,6 @@
                 </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup View="Group" Orientation="Horizontal" >
                     <dxlc:LayoutGroup Header="{DynamicResource Warning}" View="GroupBox" dxlc:LayoutControl.AllowHorizontalSizing="True" Height="200">
-
                         <dxg:GridControl MaxHeight="200" ItemsSource="{Binding DataContext.WarningCollection}" AllowLiveDataShaping="True">
                             <dxg:GridControl.Columns>
                                 <dxg:GridColumn FieldName="WarningItemID" Width="40" AllowResizing="False" FixedWidth="True" Header="{DynamicResource ID}">
@@ -183,8 +182,8 @@
                         </WrapPanel>
                     </dxlc:LayoutGroup>
                 </dxlc:LayoutGroup>
-
             </dxlc:LayoutGroup>
+            
             <dxlc:LayoutGroup VerticalAlignment="Stretch" dxlc:LayoutControl.AllowVerticalSizing="True">
                 <dxg:GridControl MaxHeight="420" Margin="4,0,4,0" ItemsSource="{Binding DataContext.CellCollection}" AllowLiveDataShaping="True">
                     <dxg:GridControl.Columns>
@@ -231,58 +230,59 @@
                                             <dx:IconSetElement Threshold="0" ThresholdComparisonType="GreaterOrEqual"  Icon="{x:Null}"/>
                                             <dx:IconSetElement Threshold="1" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/battery-discharge.png"/>
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/battery-discharge.png"/>
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                         </dx:IconSetFormat>
                                     </dxg:IconSetFormatCondition.Format>
                                 </dxg:IconSetFormatCondition>
+                                
                                 <dxg:IconSetFormatCondition FieldName="Voltage" Expression="VoltageWarningStatus">
                                     <dxg:IconSetFormatCondition.Format>
                                         <dx:IconSetFormat ElementThresholdType="Number">
                                             <dx:IconSetElement Threshold="1" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/BV_Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/BV_Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="2" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/OV_Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/OV_Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="3" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/BV_Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/BV_Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="4" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/OV_Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/OV_Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="6" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/null.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/null.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="7" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/BV_Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/BV_Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="8" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/OV_Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/OV_Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="9" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/BV_Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/BV_Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="10" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/OV_Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/OV_Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                         </dx:IconSetFormat>
@@ -293,61 +293,59 @@
                                         <dx:IconSetFormat ElementThresholdType="Number">
                                             <dx:IconSetElement Threshold="1" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="3" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="5" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="7" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="9" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Warning.png" />
                                                 </dx:IconSetElement.Icon>
-
-
                                             </dx:IconSetElement>
 
                                             <dx:IconSetElement Threshold="16" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/null.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/null.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
 
                                             <dx:IconSetElement Threshold="17" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="19" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="21" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="23" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Protection.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Protection.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                             <dx:IconSetElement Threshold="25" ThresholdComparisonType="GreaterOrEqual">
                                                 <dx:IconSetElement.Icon>
-                                                    <BitmapImage UriSource="/Coslight.TP._48V;component/Resources/Images/Warning.png" />
+                                                    <BitmapImage UriSource="/SDWpfApp;component/Resources/Images/Warning.png" />
                                                 </dx:IconSetElement.Icon>
                                             </dx:IconSetElement>
                                         </dx:IconSetFormat>

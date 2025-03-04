@@ -58,23 +58,43 @@ namespace SDWpfApp.Models
         }
         public void OnSingleCellVoltageCountChanged()
         {
+            if (SingleCellVoltageCount > SingleCellTemperatureCount) 
+            {
+                CreateCellClooection(SingleCellVoltageCount);
+            }
             //取两者之大
-            CreateCellClooection(Math.Max(SingleCellVoltageCount, SingleCellTemperatureCount));
+            //CreateCellClooection(Math.Max(SingleCellVoltageCount, SingleCellTemperatureCount));
         }
         //单体电池温度数量变化
         public void OnSingleCellTemperatureCountChanged()
         {
-            CreateCellClooection(Math.Max(SingleCellVoltageCount, SingleCellTemperatureCount));
+            //CreateCellClooection(Math.Max(SingleCellVoltageCount, SingleCellTemperatureCount));
+            if (SingleCellTemperatureCount > SingleCellVoltageCount)
+            {
+                CreateCellClooection(SingleCellTemperatureCount);
+            }
         }
         //清空现有的 CellCollection 集合，并根据 count 参数创建新的 Cell 实例，添加到集合
         private void CreateCellClooection(int count)
         {
-            CellCollection.Clear();
-
-            for (int i = 0; i < count; i++)
+            int oldcount = CellCollection.Count;
+            if (oldcount > 0)
             {
-                CellCollection.Add(ViewModelSource.Create(() => new Cell { CellID = i + 1 }));
+                if(count>oldcount)
+                {
+                    for(int i = oldcount; i < count; i++)
+                    {
+                        CellCollection.Add(ViewModelSource.Create(() => new Cell { CellID = i + 1 }));
+                    }
+                }
             }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    CellCollection.Add(ViewModelSource.Create(() => new Cell { CellID = i + 1 }));
+                }
+            }         
         }
 
     }

@@ -26,5 +26,6 @@ namespace SDWpfApp.Views
             InitializeComponent();
             //this.DataContext = new MainViewModel();
         }
+
     }
 }

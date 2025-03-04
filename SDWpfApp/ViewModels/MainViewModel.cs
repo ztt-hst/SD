@@ -6135,50 +6135,54 @@ namespace SDWpfApp.ViewModels
             PackCollection[packAddress].BatteryGroupCount = 1;
             int i = 0;
             //单体电池电压数量
-            PackCollection[packAddress].BatteryGroupCollection[i].SingleCellVoltageCount = message[offset++];
-
+            PackCollection[packAddress].BatteryGroupCollection[i].SingleCellVoltageCount = message[offset++];    
             // 检查 CellCollection
             if (PackCollection[packAddress].BatteryGroupCollection[i].CellCollection == null)
             {
                 MessageBoxService.Show("CellCollection 是 null");
             }
-            MessageBoxService.Show("CellCollection "+PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Count);
+            //MessageBoxService.Show("CellCollection "+PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Count);
             if (PackCollection[packAddress].BatteryGroupCollection[i].SingleCellVoltageCount == PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Count)
             {
-                MessageBoxService.Show("解析单体电池电压");
+                //MessageBoxService.Show("解析单体电池电压");
                 for (int j = 0; j != PackCollection[packAddress].BatteryGroupCollection[i].SingleCellVoltageCount; j++)
                 {
                     //单体电池 j 电压 实际值=传送值/1000；
                     PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[j].Voltage = BitConverter.ToUInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.001F; 
                     offset += 2;
-                    //MessageBoxService.Show("单体电池电压"+PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[j].Voltage);
+                    //MessageBoxService.Show("单体电池电压"+ j.ToString() + PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[j].Voltage);
 
                 }
             }
 
             //计算平均电压
             PackCollection[packAddress].BatteryGroupCollection[i].AverageVoltage_Coslight = PackCollection[packAddress].AverageVoltage_Coslight = PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Average(cell => cell.Voltage);//20200611
-            MessageBoxService.Show("平均电压"+PackCollection[packAddress].BatteryGroupCollection[i].AverageVoltage_Coslight);
-
+            //MessageBoxService.Show("平均电压"+PackCollection[packAddress].BatteryGroupCollection[i].AverageVoltage_Coslight);
+            //MessageBoxService.Show("单体电池电压" + PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[0].Voltage);
             //电芯温度数量
-            PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount = message[offset++] - 2;//为什么-2???
+            PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount = message[offset++];
+            //PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount = message[offset++] - 2;//为什么-2???
+            //MessageBoxService.Show("单体电池电压" + PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[0].Voltage);
+
             //解析电芯温度
             if (PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount <= PackCollection[packAddress].BatteryGroupCollection[i].CellCollection.Count)
             {
-                MessageBoxService.Show("解析单体电池温度");
+                //MessageBoxService.Show("解析单体电池温度");
                 for (int j = 0; j != PackCollection[packAddress].BatteryGroupCollection[i].SingleCellTemperatureCount; j++)
                 {
                     //电芯温度 j 数据 传输数值单位0.1K
                     PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[j].Temperature = (BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) - 2731) * 0.1F; 
                     offset += 2;
-
+                    //MessageBoxService.Show("单体电池电压" + PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[0].Voltage);
                 }
+
                 // 温度就是显示2个，实在木有办法了，特殊处理 modify by sunlw 2020-11-2 18:42
                 //为什么[2][3]独立处理
-                PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[2].Temperature = (BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) - 2731) * 0.1F;             
-                offset += 2;
-                PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[3].Temperature = (BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) - 2731) * 0.1F; 
-                offset += 2;
+                //PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[2].Temperature = (BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) - 2731) * 0.1F;             
+                //offset += 2;
+                //PackCollection[packAddress].BatteryGroupCollection[i].CellCollection[3].Temperature = (BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) - 2731) * 0.1F; 
+                //offset += 2;
+
             }
             // 环境温度
             PackCollection[packAddress].AmbinentTemperature_1_Coslight = PackCollection[packAddress].BatteryGroupCollection[i].AmbinentTemperature = (BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) - 2731) * 0.1F; 
@@ -6189,11 +6193,11 @@ namespace SDWpfApp.ViewModels
             // 电池电流数据 /100A
             PackCollection[packAddress].BatteryGroupCurrent = PackCollection[packAddress].BatteryGroupCollection[i].BatteryGroupCurrent = BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.01F; 
             offset += 2;
-            MessageBoxService.Show("电池电流数据"+PackCollection[packAddress].BatteryGroupCurrent);
+            //MessageBoxService.Show("电池电流数据"+PackCollection[packAddress].BatteryGroupCurrent);
             // 电池总压数据 /100V
             PackCollection[packAddress].BatteryGroupVoltage = PackCollection[packAddress].BatteryGroupCollection[i].BatteryGroupVoltage = BitConverter.ToInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.01F;            
             offset += 2;
-            MessageBoxService.Show("电池电压数据"+PackCollection[packAddress].BatteryGroupVoltage);
+            //MessageBoxService.Show("电池电压数据"+PackCollection[packAddress].BatteryGroupVoltage);
             // 电池剩余容量 /100AH
             PackCollection[packAddress].SOC = PackCollection[packAddress].BatteryGroupCollection[i].SOC = BitConverter.ToUInt16(new byte[] { message[offset + 1], message[offset] }, 0) * 0.01F; 
             offset += 2;

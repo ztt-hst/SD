@@ -24,7 +24,7 @@
                             <StackPanel HorizontalAlignment="Center">
                                 <dxg:GridControl AutoGenerateColumns="KeepOld" ItemsSource="{Binding BatteryGroupCollection}" AllowLiveDataShaping="True" MaxWidth="1180" >
                                     <dxg:GridControl.View>
-                                        <dxg:CardView AllowEditing="False"  ShowGroupPanel="False" CardLayout="Columns"  CardHeaderTemplate="{DynamicResource batteryGroupHeaderTemplate}" CardTemplate="{DynamicResource cardZTETemplate}"/>
+                                        <dxg:CardView AllowEditing="False"  ShowGroupPanel="False" CardLayout="Columns"  CardHeaderTemplate="{DynamicResource batteryGroupHeaderTemplate}" CardTemplate="{DynamicResource cardDPCTemplate}"/>
                                     </dxg:GridControl.View>
                                 </dxg:GridControl>
                             </StackPanel>
